@@ -40,6 +40,10 @@ class JIT_PLSR(RegressorMixin):
         'kulczynski1', 'mahalanobis', 'matching', 'minkowski', 
         'rogerstanimoto', 'russellrao', 'seuclidean', 'sokalmichener', 
         'sokalsneath', 'sqeuclidean', 'yule'.
+    
+    n_jobs : int, default=1
+        Number of jobs to run in parallel for parameter tuning.
+        -1 means using all processors. See Glossary for more details.
 
     Attributes
     ----------
@@ -68,12 +72,13 @@ class JIT_PLSR(RegressorMixin):
         Target variable of training data were scaled to unit variance.
 
     """
-    def __init__(self, max_n_components=5, k_nearest=10, k_fold=5, scoring='neg_mean_absolute_percentage_error', sim_metric='euclidean'):
+    def __init__(self, max_n_components=5, k_nearest=10, k_fold=5, scoring='neg_mean_absolute_percentage_error', sim_metric='euclidean', n_jobs=1):
         self.max_n_components = max_n_components
         self.k_nearest = k_nearest
         self.k_fold = k_fold
         self.scoring = scoring
         self.sim_metric = sim_metric
+        self.n_jobs = n_jobs
 
     def fit(self, X, y):
         """Fit model to data.
@@ -191,7 +196,7 @@ class JIT_PLSR(RegressorMixin):
         """
         parameters = {'n_components': np.arange(1, self.max_n_components + 1, 1)}
         plsr_model = PLSRegression()
-        clf = GridSearchCV(estimator=plsr_model, param_grid=parameters, scoring=self.scoring, cv=self.k_fold, refit=False)
+        clf = GridSearchCV(estimator=plsr_model, param_grid=parameters, scoring=self.scoring, cv=self.k_fold, refit=False, n_jobs=self.n_jobs)
         clf.fit(X_train, y_train)
         best_params = clf.best_params_
         local_model = PLSRegression(**best_params)
