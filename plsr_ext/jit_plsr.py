@@ -4,6 +4,7 @@ import numpy as np
 from scipy.spatial.distance import cdist
 from sklearn.base import RegressorMixin
 from plsr_ext.utils import find_K_nearest_samples
+from plsr_ext.plsr import PLSR
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.model_selection import GridSearchCV
 
@@ -195,11 +196,11 @@ class JIT_PLSR(RegressorMixin):
 
         """
         parameters = {'n_components': np.arange(1, self.max_n_components + 1, 1)}
-        plsr_model = PLSRegression(scale=False)
+        plsr_model = PLSR(scale=False)
         clf = GridSearchCV(estimator=plsr_model, param_grid=parameters, scoring=self.scoring, cv=self.k_fold, refit=False, n_jobs=self.n_jobs)
         clf.fit(X_train, y_train)
         best_params = clf.best_params_
-        local_model = PLSRegression(**best_params, scale=False)
+        local_model = PLSR(**best_params, scale=False)
         local_model.fit(X_train, y_train)
         return local_model
 
