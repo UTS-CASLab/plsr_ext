@@ -212,7 +212,6 @@ class RPLSR(RegressorMixin):
             X /= self.x_std
             y_pred = self.y_mean + np.matmul(X, self.C) * self.y_std
         else:
-            X = X / math.sqrt(self.n_samples - 1)
             y_pred = np.matmul(X, self.C)
         
         if self.n_targets == 1:
@@ -258,8 +257,8 @@ class RPLSR(RegressorMixin):
                 # bq_t_tmp = np.matmul(np.diag(self.b), self.Q.T) * self.y_std + self.y_mean
 
                 # self.update_mean_std(new_X[i], new_Y[i])
-                new_X = (new_X - self.x_mean) / self.x_std
-                new_Y = (new_Y - self.y_mean) / self.y_std
+                new_X[i] = (new_X[i] - self.x_mean) / self.x_std
+                new_Y[i] = (new_Y[i] - self.y_mean) / self.y_std
 
                 # X = np.vstack((self.forgetting_lambda * p_t_tmp, new_X[i]))
                 # Y = np.vstack((self.forgetting_lambda * bq_t_tmp, new_Y[i]))

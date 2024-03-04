@@ -21,24 +21,23 @@ y_pred = model1.predict(X_test)
 print("MAPE score Updating (Scaling): ", mean_absolute_error(y_test, y_pred))
 print(y_pred)
 
-# Normalising
-model2 = RPLSR(n_components=4, forgetting_lambda=1, max_iter=5000, tol=1e-6, scale=False)
-model2.fit(X_train, y_train)
-y_pred = model2.predict(X_test)
+# model2 = RPLSR(n_components=4, forgetting_lambda=1, max_iter=5000, tol=1e-6, scale=False)
+# model2.fit(X_train, y_train)
+# y_pred = model2.predict(X_test)
 
-print("MAPE score (No scaling): ", mean_absolute_error(y_test, y_pred))
-print(y_pred)
-model2.update(X_update, y_update)
-y_pred = model2.predict(X_test)
+# print("MAPE score (No scaling): ", mean_absolute_error(y_test, y_pred))
+# print(y_pred)
+# model2.update(X_update, y_update)
+# y_pred = model2.predict(X_test)
 
-print("MAPE score Updating (No scaling): ", mean_absolute_error(y_test, y_pred))
-print(y_pred)
+# print("MAPE score Updating (No scaling): ", mean_absolute_error(y_test, y_pred))
+# print(y_pred)
 
 print("Incremental learning")
 model = RPLSR(n_components=4, forgetting_lambda=1, max_iter=5000, tol=1e-6, scale=True)
 model.fit(X_train, y_train)
 for i in range(X_update.shape[0]):
-    model.update(X_update[i], y_update[i])
+    model = model.update(X_update[i], y_update[i])
     y_pred = model.predict(X_test)
     print("MAPE score Incremental learning (Scaling): ", mean_absolute_error(y_test, y_pred))
 
