@@ -29,12 +29,13 @@ Dependencies
 From the downloaded source code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Please navigate to the downloaded package and type::
+Please navigate to the downloaded package and type ::
+
     python install .
 
 After install the library, you can check if the library has been 
 installed in your machine or not by executing the testing scripts in 
-the "plsr_ext" subdirectory::
+the "plsr_ext" subdirectory such as::
     python test_plsr.py
 
 Install from Github code
