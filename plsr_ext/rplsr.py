@@ -257,16 +257,22 @@ class RPLSR(RegressorMixin):
 
         for i in range(new_X.shape[0]):
             if self.scale == True:
-                scale_X_i = (new_X[i] - self.x_mean) / self.x_std
-                scale_Y_i = (new_Y[i] - self.y_mean) / self.y_std
-
-                X = np.vstack((self.forgetting_lambda * self.P.T , scale_X_i))
-                Y = np.vstack((self.forgetting_lambda * np.matmul(np.diag(self.b), self.Q.T), scale_Y_i))
-
                 if update_mean_std == True:
+                    p_t_tmp = self.P.T * self.x_std + self.x_mean
+                    bq_t_tmp = np.matmul(np.diag(self.b), self.Q.T) * self.y_std + self.y_mean
                     self.update_mean_std(new_X[i], new_Y[i])
+
+                    X = np.vstack((self.forgetting_lambda * p_t_tmp, new_X[i]))
+                    Y = np.vstack((self.forgetting_lambda * bq_t_tmp, new_Y[i]))
                     X = (X - self.x_mean) / self.x_std
                     Y = (Y - self.y_mean) / self.y_std
+                else:
+                    scale_X_i = (new_X[i] - self.x_mean) / self.x_std
+                    scale_Y_i = (new_Y[i] - self.y_mean) / self.y_std
+
+                    X = np.vstack((self.forgetting_lambda * self.P.T , scale_X_i))
+                    Y = np.vstack((self.forgetting_lambda * np.matmul(np.diag(self.b), self.Q.T), scale_Y_i))
+                
             else:
                 X = np.vstack((self.forgetting_lambda * self.P.T, new_X[i]))
                 Y = np.vstack((self.forgetting_lambda * np.matmul(np.diag(self.b), self.Q.T), new_Y[i]))
