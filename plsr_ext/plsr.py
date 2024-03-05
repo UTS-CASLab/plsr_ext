@@ -232,12 +232,13 @@ class PLSR(BaseEstimator, RegressorMixin):
             X = np.array(X)
         elif typeX == np.float64 or typeX == float or typeX == np.int64 or typeX == int:
             X = np.array([X])
+        else:
+            X = X.copy()
 
         if self.scale == True:
             # Normalize
-            X -= self.x_mean
-            X /= self.x_std
-            y_pred = self.y_mean + np.matmul(X, self.C) * self.y_std
+            scale_X = (X - self.x_mean) / self.x_std
+            y_pred = self.y_mean + np.matmul(scale_X, self.C) * self.y_std
         else:
             y_pred = np.matmul(X, self.C)
         

@@ -172,8 +172,7 @@ class RPLSR(RegressorMixin):
             X_norm, Y_norm = self.data_unit_scaling(X, Y)
             plsr_model._fit(X_norm, Y_norm)
         else:
-            X_norm = X / math.sqrt(self.n_samples - 1)
-            plsr_model._fit(X_norm, Y)
+            plsr_model._fit(X, Y)
 
         # store data
         self.P = plsr_model.P.copy()
@@ -205,12 +204,13 @@ class RPLSR(RegressorMixin):
             X = np.array(X)
         elif typeX == np.float64 or typeX == float or typeX == np.int64 or typeX == int:
             X = np.array([X])
+        else:
+            X = X.copy()
 
         if self.scale == True:
             # Normalize
-            X -= self.x_mean
-            X /= self.x_std
-            y_pred = self.y_mean + np.matmul(X, self.C) * self.y_std
+            scale_X = (X - self.x_mean) / self.x_std
+            y_pred = self.y_mean + np.matmul(scale_X, self.C) * self.y_std
         else:
             y_pred = np.matmul(X, self.C)
         
@@ -219,7 +219,7 @@ class RPLSR(RegressorMixin):
         else:
             return y_pred
         
-    def update(self, new_X, new_Y):
+    def update(self, new_X, new_Y, update_mean_std=True):
         """
         Update the trained model according to new input values
 
@@ -233,10 +233,14 @@ class RPLSR(RegressorMixin):
             Orignal new target vectors, where `n_samples` is the number of new samples and
             `n_targets` is the number of response variables.
 
+        update_mean_std : bool, default=True
+            Whether update mean and standard deviation of all learned data.
+            This variable only has the power if scale parameter is True.
+
         Returns
         -------
         self : object
-            Updated model.
+            Fitted model.
         """
         typeY = type(new_Y)
 
@@ -253,22 +257,16 @@ class RPLSR(RegressorMixin):
 
         for i in range(new_X.shape[0]):
             if self.scale == True:
-                # p_t_tmp = self.P.T * self.x_std + self.x_mean
-                # bq_t_tmp = np.matmul(np.diag(self.b), self.Q.T) * self.y_std + self.y_mean
+                scale_X_i = (new_X[i] - self.x_mean) / self.x_std
+                scale_Y_i = (new_Y[i] - self.y_mean) / self.y_std
 
-                # self.update_mean_std(new_X[i], new_Y[i])
-                new_X[i] = (new_X[i] - self.x_mean) / self.x_std
-                new_Y[i] = (new_Y[i] - self.y_mean) / self.y_std
+                X = np.vstack((self.forgetting_lambda * self.P.T , scale_X_i))
+                Y = np.vstack((self.forgetting_lambda * np.matmul(np.diag(self.b), self.Q.T), scale_Y_i))
 
-                # X = np.vstack((self.forgetting_lambda * p_t_tmp, new_X[i]))
-                # Y = np.vstack((self.forgetting_lambda * bq_t_tmp, new_Y[i]))
-
-                X = np.vstack((self.forgetting_lambda * self.P.T , new_X[i]))
-                Y = np.vstack((self.forgetting_lambda * np.matmul(np.diag(self.b), self.Q.T), new_Y[i]))
-
-                # X = (X - self.x_mean) / self.x_std
-                # Y = (Y - self.y_mean) / self.y_std
-                # X, Y = self.data_unit_scaling(X, Y)
+                if update_mean_std == True:
+                    self.update_mean_std(new_X[i], new_Y[i])
+                    X = (X - self.x_mean) / self.x_std
+                    Y = (Y - self.y_mean) / self.y_std
             else:
                 X = np.vstack((self.forgetting_lambda * self.P.T, new_X[i]))
                 Y = np.vstack((self.forgetting_lambda * np.matmul(np.diag(self.b), self.Q.T), new_Y[i]))
@@ -280,7 +278,7 @@ class RPLSR(RegressorMixin):
             self.b = plsr_model.b.copy()
             self.P = plsr_model.P.copy()
             self.Q = plsr_model.Q.copy()
-        
+
         # copy the final model
         self.P = plsr_model.P.copy()
         self.Q = plsr_model.Q.copy()
