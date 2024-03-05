@@ -26,7 +26,7 @@ model2.fit(X_train, y_train)
 y_pred = model2.predict(X_test)
 
 print("MAPE score (No scaling): ", mean_absolute_percentage_error(y_test, y_pred))
-print("R2 score (Scaling): ", r2_score(y_test, y_pred))
+print("R2 score (No Scaling): ", r2_score(y_test, y_pred))
 print(y_pred)
 
 from sklearn.cross_decomposition import PLSRegression
@@ -35,5 +35,5 @@ sk_plsr = PLSRegression(n_components=4, max_iter=500, tol=1e-06)
 sk_plsr.fit(X_train, y_train)
 y_pred_sk = sk_plsr.predict(X_test).ravel()
 print("MAPE score (sklearn): ", mean_absolute_percentage_error(y_test, y_pred_sk))
-print("R2 score (sklearn): ", r2_score(y_test, y_pred))
+print("R2 score (sklearn): ", r2_score(y_test, y_pred_sk))
 print(y_pred_sk)
