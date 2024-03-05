@@ -219,7 +219,7 @@ class RPLSR(RegressorMixin):
         else:
             return y_pred
         
-    def update(self, new_X, new_Y, update_mean_std=True):
+    def update(self, new_X, new_Y, update_mean_std=False):
         """
         Update the trained model according to new input values
 
@@ -233,7 +233,7 @@ class RPLSR(RegressorMixin):
             Orignal new target vectors, where `n_samples` is the number of new samples and
             `n_targets` is the number of response variables.
 
-        update_mean_std : bool, default=True
+        update_mean_std : bool, default=False
             Whether update mean and standard deviation of all learned data.
             This variable only has the power if scale parameter is True.
 

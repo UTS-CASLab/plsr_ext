@@ -15,21 +15,21 @@ y_pred = model1.predict(X_test)
 
 print("MAPE score (Scaling): ", mean_absolute_percentage_error(y_test, y_pred))
 print(y_pred)
-model1.update(X_update, y_update, True)
+model1.update(X_update, y_update, False)
 y_pred = model1.predict(X_test)
 
-print("MAPE score Updating and Mean-Std update (Scaling): ", mean_absolute_percentage_error(y_test, y_pred))
+print("MAPE score Updating and no Mean-Std update (Scaling): ", mean_absolute_percentage_error(y_test, y_pred))
 print(y_pred)
 
 print("Incremental learning")
 model2 = RPLSR(n_components=4, forgetting_lambda=1, max_iter=5000, tol=1e-6, scale=True)
 model2.fit(X_train, y_train)
 for i in range(X_update.shape[0]):
-    model2.update(X_update[i], y_update[i], True)
+    model2.update(X_update[i], y_update[i], False)
 
     y_pred_2 = model2.predict(X_test)
     mape = mean_absolute_percentage_error(y_test, y_pred_2)
-    print("(Scaling) MAPE score Incremental learning and updating mean + std: ", mape)
+    print("(Scaling) MAPE score Incremental learning and no updating mean + std: ", mape)
 print(y_pred_2)
 
 model3 = RPLSR(n_components=4, forgetting_lambda=1, max_iter=5000, tol=1e-6, scale=False)
