@@ -2,7 +2,7 @@
 
 import numpy as np
 from sklearn.base import RegressorMixin
-from plsr_ext import PLSR
+from plsr_ext import MPLSR
 import math
 
 class RPLSR(RegressorMixin):
@@ -166,7 +166,7 @@ class RPLSR(RegressorMixin):
         self.n_samples, self.n_features = X.shape
         self.n_targets = Y.shape[1]
         
-        plsr_model = PLSR(n_components=self.n_components, max_iter=self.max_iter, tol=self.tol)
+        plsr_model = MPLSR(n_components=self.n_components, max_iter=self.max_iter, tol=self.tol)
         if self.scale == True:
             # Performing a unit scaling for the training data
             X_norm, Y_norm = self.data_unit_scaling(X, Y)
@@ -272,7 +272,7 @@ class RPLSR(RegressorMixin):
                 Y = np.vstack((self.forgetting_lambda * np.matmul(np.diag(self.b), self.Q.T), new_Y[i]))
 
             # Training the PLSR model
-            plsr_model = PLSR(n_components=self.n_components, max_iter=self.max_iter, tol=self.tol)
+            plsr_model = MPLSR(n_components=self.n_components, max_iter=self.max_iter, tol=self.tol)
             plsr_model._fit(X, Y)
 
             self.b = plsr_model.b.copy()

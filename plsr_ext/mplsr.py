@@ -1,12 +1,16 @@
-# Partial Least Squares (PLSR)
+# Modified Partial Least Squares (mPLSR)
 
 import numpy as np
 from sklearn.base import RegressorMixin
 from sklearn.base import BaseEstimator
 import math
 
-class PLSR(BaseEstimator, RegressorMixin):
-    """Partial least squares regression.
+class MPLSR(BaseEstimator, RegressorMixin):
+    """Modified Partial least squares regression.
+
+    This version modifies the original NIPALS algorithm so that 
+    the matrix T consisting of scores of latent vectors of `X` 
+    is orthonormal.
     
     Parameters
     ----------
@@ -125,10 +129,11 @@ class PLSR(BaseEstimator, RegressorMixin):
         for it in range(self.n_components):
             u_tmp = Y[:,np.random.randint(n_targets)].reshape(n_samples,1)      
             for _ in range(self.max_iter):
-                p_tmp = np.matmul(X.T, u_tmp)
-                p_tmp /= np.linalg.norm(p_tmp, 2)
+                w_tmp = np.matmul(X.T, u_tmp)
+                w_tmp /= np.sum(u_tmp * u_tmp)
 
-                t_tmp = np.matmul(X, p_tmp)
+                t_tmp = np.matmul(X, w_tmp)
+                t_tmp /= np.linalg.norm(t_tmp, 2)
 
                 q_tmp = np.matmul(Y.T, t_tmp)
                 q_tmp /= np.linalg.norm(q_tmp, 2)
@@ -139,7 +144,7 @@ class PLSR(BaseEstimator, RegressorMixin):
                     break
                 u_tmp = u_new
             
-            W[:,it] = p_tmp.reshape((n_features))
+            W[:,it] = w_tmp.reshape((n_features))
             Q[:,it] = q_tmp.reshape((n_targets))
             U[:,it] = u_tmp.reshape((n_samples))
             T[:,it] = t_tmp.reshape((n_samples))
