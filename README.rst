@@ -34,8 +34,9 @@ Please navigate to the downloaded package and type ::
     python install .
 
 After install the library, you can check if the library has been 
-installed in your machine or not by executing the testing scripts in 
-the "plsr_ext" subdirectory such as::
+installed in your machine or not by navigating to and executing the 
+testing scripts in the "test" subdirectory such as::
+
     python test_plsr.py
 
 Install from Github code
