@@ -2,10 +2,10 @@
 
 import numpy as np
 from sklearn.base import RegressorMixin
+from sklearn.base import BaseEstimator
 from plsr_ext import MPLSR
-import math
 
-class RPLSR(RegressorMixin):
+class RPLSR(BaseEstimator, RegressorMixin):
     """Recursive partial least squares regression.
     
     Parameters

@@ -3,7 +3,6 @@
 import numpy as np
 from sklearn.base import RegressorMixin
 from sklearn.base import BaseEstimator
-import math
 
 class PLSR(BaseEstimator, RegressorMixin):
     """Partial least squares regression.

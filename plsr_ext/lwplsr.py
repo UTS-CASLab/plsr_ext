@@ -3,8 +3,9 @@
 import numpy as np
 from scipy.spatial.distance import cdist
 from sklearn.base import RegressorMixin
+from sklearn.base import BaseEstimator
 
-class LWPLSR(RegressorMixin):
+class LWPLSR(BaseEstimator, RegressorMixin):
     """Locally-Weighted PLS regression.
     
     This implementation considered only one response variable in the

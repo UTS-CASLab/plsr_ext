@@ -5,10 +5,10 @@ from scipy.spatial.distance import cdist
 from sklearn.base import RegressorMixin
 from plsr_ext.utils import find_K_nearest_samples
 from plsr_ext.plsr import PLSR
-from sklearn.cross_decomposition import PLSRegression
+from sklearn.base import BaseEstimator
 from sklearn.model_selection import GridSearchCV
 
-class JIT_PLSR(RegressorMixin):
+class JIT_PLSR(BaseEstimator, RegressorMixin):
     """Just-in-time learning-integrated partial least squares regression.
     
     This implementation considered only one response variable in the

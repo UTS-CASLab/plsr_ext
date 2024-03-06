@@ -1,11 +1,11 @@
 # K-Nearest neighbors based Locally-Weighted Partial Least Squares (LWPLS)
 
 import numpy as np
-from scipy.spatial.distance import cdist
 from sklearn.base import RegressorMixin
 from plsr_ext.utils import find_K_nearest_samples
+from sklearn.base import BaseEstimator
 
-class KNN_LWPLSR(RegressorMixin):
+class KNN_LWPLSR(BaseEstimator, RegressorMixin):
     """K-nearest neighbors based Locally-Weighted PLS regression.
     
     This implementation considered only one response variable in the
